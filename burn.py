@@ -18,8 +18,10 @@ import trio
 
 @dataclass
 class Line:
-    cells: list[tuple[str, int]]  # (character, curses attributes).
-    y: int | None = None  # None means the line is offscreen.
+    cells: list[tuple[str, int]]
+    """(character, curses attributes)"""
+
+    y: int | None = None
     cancel_scope: trio.CancelScope | None = None
 
 
@@ -43,10 +45,12 @@ def draw_line(screen, line):
 
 async def burn_character(screen, line, x):
     char, _ = line.cells[x]
+
     await trio.sleep(random.uniform(0, 1))
     set_cell(
         screen, line, x, char, random.choice((curses.COLOR_RED, curses.COLOR_YELLOW))
     )
+
     await trio.sleep(random.uniform(2, 5))
     set_cell(screen, line, x, random.choice(string.ascii_lowercase), attr=curses.A_DIM)
 
@@ -60,6 +64,7 @@ async def burn(screen, line, *, task_status=trio.TASK_STATUS_IGNORED):
 
 async def read_key(screen):
     await trio.lowlevel.checkpoint()
+
     while True:
         try:
             return screen.get_wch()
